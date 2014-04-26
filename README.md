@@ -1,15 +1,13 @@
 HorsePower
 ==========
 
-~~~ KNOWN ISSUES ~~~
-  - TWO KNOWN BUGS IN GAME LOGIC
-    (1) Creating and analyzing correct moves from a 'fork' starting position - where two or more different jumps
-        are possible.
-    (2) The Illegal move from hell - as it is now, when playing as black, moving 'b' to (0:0) or Pos:32 does
-         not result in 'b' being Kinged.
+KNOWN ISSUES :+
+
+    - Double jumping as black into bottom corner (0:0) or (32) as a regular piece does not result in new black king at that location, so client doesnt recognize there's a new king when it scans the incorrect board leading to Invalid Move when there's a valid king jump it can make and it doesn't take it
 
 ~> update with what you're doing <~
 
 $PLUDE : 
-    - Currently restructuring entire move logic to address the forking issue.
-    hopefully Illegal move from hell will fix itself when new logic and move structure is in place.
+    - Fixed forking logic
+    - I left some print statements in from debugging ; you can see that everything is going as it should when the piece double jumps into corner, and the result function is setting that corner to the correct king value so wtf...
+    - I'm almost certain everything else is working - you can run it making random non minimax moves to see. I ran it about 40-50 times without fail (not including bottom corner)
