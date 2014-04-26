@@ -9,14 +9,7 @@ HorsePower
          not result in 'b' being Kinged.
 
 ~> update with what you're doing <~
-$AARON : ?
-
-$SINH : ?
-
-$ZHI : ?
-
-$ANDREW : ?
 
 $PLUDE : 
-    -I'm currently restructuring entire move logic to address the forking issue.
+    - Currently restructuring entire move logic to address the forking issue.
     hopefully Illegal move from hell will fix itself when new logic and move structure is in place.
