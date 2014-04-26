@@ -39,8 +39,6 @@ public class HPClient {
 	private static long _timeStart, _timeStop, _makeConverterStart, _makeConverterStop;
 	
 	
-	
-	
 	public HPClient() {
 		_sherlock = new MiniMaxSearcher();
 		_socket = this.openSocket(_icarusAddress, _icarusPort);
@@ -51,7 +49,6 @@ public class HPClient {
 		_makeConverterStop = System.currentTimeMillis();
 	}
 
-	
 	
 	public static void main(String [] args) {
 		
