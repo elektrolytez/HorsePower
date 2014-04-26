@@ -1,8 +1,9 @@
-package horsepower.Checkers;
+package horsepower_checkers;
 
 import horsepower_main.HPClient;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -33,28 +34,11 @@ public class Board {
 		_playerToMove = player;
 		
 		if (_playerToMove) { // player is black
-			_oppSymbols = "w Q";
-			_oppKing = "Q";
-			_regPiece = "b";
-			_kingPiece = "K";
-			_regMovements.add(4); //black moves "downward" or in increasing index order
-			_regMovements.add(5);
-			_kingRowIndices.add(32);
-			_kingRowIndices.add(33);
-			_kingRowIndices.add(34);
-			_kingRowIndices.add(35);
+			this.initBlackValues();
 		} else { // player is white
-			_oppSymbols = "b K"; //opponent's pieces
-			_oppKing = "K";
-			_regPiece = "w";
-			_kingPiece = "Q";
-			_regMovements.add(-4); //white moves "upward" or in decending index order
-			_regMovements.add(-5);
-			_kingRowIndices.add(1);
-			_kingRowIndices.add(2);
-			_kingRowIndices.add(3);
-			_kingRowIndices.add(4);
+			this.initWhiteValues();
 		}
+		
 		//kings have full mobility
 		_kingMovements.add(-4);
 		_kingMovements.add(-5);
@@ -72,22 +56,48 @@ public class Board {
 		_possibleMoves = this.getActions();
 	}
 	
+	public void initBlackValues() {
+		_oppSymbols = "w Q";
+		_oppKing = "Q";
+		_regPiece = "b";
+		_kingPiece = "K";
+		_regMovements.add(4); //black moves "downward" or in increasing index order
+		_regMovements.add(5);
+		_kingRowIndices.add(32);
+		_kingRowIndices.add(33);
+		_kingRowIndices.add(34);
+		_kingRowIndices.add(35);
+	}
+	public void initWhiteValues() {
+		_oppSymbols = "b K"; //opponent's pieces
+		_oppKing = "K";
+		_regPiece = "w";
+		_kingPiece = "Q";
+		_regMovements.add(-4); //white moves "upward" or in decending index order
+		_regMovements.add(-5);
+		_kingRowIndices.add(1);
+		_kingRowIndices.add(2);
+		_kingRowIndices.add(3);
+		_kingRowIndices.add(4);
+	}
+	
+	
 	public void findActions() {
 		// find actions
 		this.findPieces();
 		
 		for (Integer regPos : _regsList) {
-			this.findJumps(regPos, regPos, null, _regMovements); //passing with previous pos = start pos
+			this.findJumpMoves(regPos, regPos, null, _regMovements); //passing with previous pos = start pos
 		}
 		for (Integer kingPos : _kingsList) {
-			this.findJumps(kingPos, kingPos, null, _kingMovements);
+			this.findJumpMoves(kingPos, kingPos, null, _kingMovements);
 		}
 		if (_jumps.isEmpty()) { //if any jumps were found no need to look for regular moves
 			for (Integer regPos : _regsList) {
-				this.findMoves(regPos, _regMovements);
+				this.findRegMoves(regPos, _regMovements);
 			}
 			for (Integer kingPos : _kingsList) {
-				this.findMoves(kingPos, _kingMovements);
+				this.findRegMoves(kingPos, _kingMovements);
 			}
 		}
 	}
@@ -95,54 +105,119 @@ public class Board {
 	/*
 	 * non recursive method for finding all regular actions there are available
 	 */
-	public void findMoves(int startPos, List<Integer> validSteps) {
+	public void findRegMoves(int startPos, List<Integer> validSteps) {
 		for (Integer step : validSteps) {
 			if (this.validTile(startPos + step) && this.validMove(startPos + step)) {
-				Move act = new Move(startPos, startPos+step,_playerToMove);
+				Move act = new Move(_playerToMove); 
+				act.addAction(startPos, startPos+step, false);
 				_actions.add(act);
 			}
 		}
 	}
 	
-	/*
-	 * recursive find jump method that works for any type of piece
-	 */
-	public void findJumps(int prevPos, int startPos, Move prevMove, List<Integer> validSteps) {
-		for (Integer step : validSteps) {
-			int dubStep = step*2; //because we're jumping
-			int nextPos = startPos + dubStep; //calculate jump destination
-			if (nextPos != prevPos) { //excludes looking at where it came from - for recursion
-				if (this.validTile(startPos + step)) { //checks if valid index of board
-					if (_oppSymbols.contains(_board[startPos + step])) { //does pos+step contain enemy piece
-						if (this.validMove(nextPos)) { // found enemy, check if jump dest is free
-							if (prevMove == null) { // if prevmove is not set, make new move and add it to jumps
-								Move j = new Move(startPos, nextPos, _playerToMove);
-								j.makeJump(true);
-								j.updateStep(dubStep);
-								_jumps.add(j);
-								
-								//testing if non king piece is reaching valid king row
-								if (this.isKingRow(nextPos) && _board[startPos].equals(_regPiece)) {
-									break;
-								} else { //if not, continue recursing
-									findJumps(startPos, nextPos, j, validSteps);									
-								}
-							} else { //else add jump step to prev move (making it a multi-jump)
-								prevMove.addJump(startPos, nextPos);
-								prevMove.updateStep(dubStep);
-
-								//testing if non king piece is reaching valid king row - if so, stop recursing
-								if (this.isKingRow(nextPos) && _board[prevMove.from()].equals(_regPiece)) {
-									break;
-								} else { //if not, continue recursing
-									findJumps(startPos, nextPos, prevMove, validSteps);									
-								}
-							}
-						}
+	public void findJumpMoves(int prevPos, int curPos, Move lastMove, List<Integer> degOfFreedom) {
+		List<Integer> nextPosList;// = findValidNextJumpPos(prevPos, curPos, degOfFreedom);
+		if (lastMove == null) {
+			nextPosList = findValidNextJumpPos(prevPos, curPos, degOfFreedom);
+		} else {
+			int[] preLoc = lastMove.getLastAct();
+			nextPosList = findValidNextJumpPos(preLoc[0], curPos, degOfFreedom);
+		}
+		
+		
+		int size = nextPosList.size();
+		if (size == 0) { //no more jumps - base case
+			return;
+		} else if (size > 1) { // multiple moves to choose from, recurse on all of them.
+			for (Integer nextPos : nextPosList) {
+				
+				//printed at multi-jumps and fork-actions
+				//System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
+				
+				if (this.isKingUpAction(curPos, nextPos, lastMove)) {
+					break; // move is over - stop evaluating any further
+				} else {
+					Move forkJump;
+					if (lastMove == null) {
+						forkJump = new Move(_playerToMove);
+						_jumps.add(forkJump);
+					} else {
+						forkJump = new Move(lastMove);
+						forkJump.removeLastAct();
+						_jumps.add(forkJump);
+					}
+					forkJump.addAction(curPos, nextPos, true);
+					
+					//System.out.println(forkJump.getMessage());
+					
+					this.findJumpMoves(curPos, nextPos, forkJump, degOfFreedom);
+				}
+			}
+		} else { //one move to analyze
+			Move regJump;
+			if (lastMove == null) {
+				regJump = new Move(_playerToMove);
+				_jumps.add(regJump);
+			} else {
+				regJump = lastMove;
+			}
+			int nextPos = nextPosList.get(0);
+			if (this.isKingUpAction(curPos, nextPos, lastMove)) {
+				// move is over - stop recursively evaluating
+				regJump.addAction(curPos, nextPos, true);
+			} else {
+				
+				//System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
+				
+				regJump.addAction(curPos, nextPos, true);
+				this.findJumpMoves(curPos, nextPos, regJump, degOfFreedom);
+			}
+		}
+	}
+	
+	public boolean isKingUpAction(int curPos, int nextPos, Move lastMove) {
+		if (this.isKingRow(nextPos)) {
+			if (lastMove == null) {
+				if (_board[curPos].equals(_regPiece)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				if (_board[lastMove.getFirstAct()[0]].equals(_regPiece)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	public List<Integer> findValidNextJumpPos(int prevPos, int curPos, List<Integer> degOfFreedom) {
+		List<Integer> possibleSteps = new ArrayList<Integer>();
+		for (Integer step : degOfFreedom) {
+			if ((curPos + step != prevPos) && (curPos + step*2 != prevPos)) {
+				if (this.validTile(curPos+step)) {
+					if (_oppSymbols.contains(_board[curPos+step])) {
+						possibleSteps.add(curPos + step*2);
 					}
 				}
 			}
 		}
+		if (possibleSteps.isEmpty()) {
+			//skip loop and return
+		} else {
+			Iterator<Integer> stepIter = possibleSteps.iterator();
+			while (stepIter.hasNext()) {
+				int s = stepIter.next();
+				if (!this.validMove(s)) {
+					stepIter.remove();
+				}
+			}
+		}
+		return possibleSteps;
 	}
 	
 	/*
@@ -225,8 +300,11 @@ public class Board {
 		for (int i=0 ; i<36 ; i++) {
 			newBoard[i] = _board[i];
 		}
-		if (move.isJump()) { //move is a jump move
-			String piece = _board[move.from()];
+		if (move.isMoveAJump()) { //move is a jump move
+			String piece = _board[move.getFirstAct()[0]];
+			
+			//System.out.println("@@@@@@@@@@@@@@@@@@ Moving piece : "+piece);
+			
 			for (int[] jump : move.getJumpList()) { //combine all jump moves if move is multi-jump
 				int fromIndex = jump[0];
 				int toIndex = jump[1];
@@ -234,8 +312,15 @@ public class Board {
 				newBoard[fromIndex] = "_";
 				newBoard[jumpedIndex] = "_";
 				
+				//System.out.println("@@@@@@@@@@@@@@@@@@ From Loc : "+fromIndex);
+				//System.out.println("@@@@@@@@@@@@@@@@@@ To Loc : "+toIndex);
+				
 				//test if destination is king row and jumping piece is regular piece
 				if (this.isKingRow(toIndex) && piece.equals(_regPiece)) {
+					if (toIndex==32) {
+						System.out.println("SETTING *LOC* 32 TO BE : " + _kingPiece + " ~ FROM : "+_regPiece);
+						newBoard[32] = _kingPiece;
+					}
 					newBoard[toIndex] = _kingPiece; //if so, make king and end move
 					break;
 				} else { //else continue on your merry way
@@ -243,8 +328,8 @@ public class Board {
 				}	
 			}
 		} else { //move is not a jump move
-			int fromIndex = move.from();
-			int toIndex = move.to();
+			int fromIndex = move.getFirstAct()[0];
+			int toIndex = move.getFirstAct()[1];
 			String piece = _board[fromIndex];
 			newBoard[fromIndex] = "_";
 			if (this.isKingRow(toIndex) && piece.equals(_regPiece)) {

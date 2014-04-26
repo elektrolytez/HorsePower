@@ -1,8 +1,7 @@
 package horsepower_main;
 
-import horsepower.Checkers.Board;
-import horsepower.Checkers.Move;
-import horsepower.Search.MiniMaxSearcher;
+import horsepower_checkers.*;
+import horsepower_search.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,9 +17,9 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user = null;
-	private static String _pw = null;
-	private static String _opponent; // 0 for server bot
+	private static String _user = "15";
+	private static String _pw = "544075";
+	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
 	private Socket _socket = null;
@@ -63,13 +62,13 @@ public class HPClient {
 			Scanner reader = new Scanner(System.in);
 			HPClient.readAndEcho(); // start message
 			HPClient.readAndEcho(); // ID query
-			_user = reader.next();
+			//_user = reader.next();
 			HPClient.writeMessageAndEcho(_user); // user ID
 			HPClient.readAndEcho(); // password query
-			_pw = reader.next();
+			//_pw = reader.next();
 			HPClient.writeMessage(_pw); // password
 			HPClient.readAndEcho(); // opponent query
-			_opponent = reader.next();
+			//_opponent = reader.next();
 			HPClient.writeMessageAndEcho(_opponent); // opponent
 			reader.close();
 			
@@ -99,8 +98,10 @@ public class HPClient {
 				//Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth and stuff
-				int depth = 2000;
+				int depth = 3;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
+				
+				//System.out.println("");
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
 				readMessage = HPClient.readAndEcho(); // show the move received by the server
@@ -132,6 +133,7 @@ public class HPClient {
 		System.out.println("\n\nTotal Time (ns) : " + time);
 		System.out.println("Total Time (ms) : " + time/1000000.0);
 		
+		System.out.println("Total Recursion : " + _sherlock.getFinalRecursion());
 	}
 	
 	
@@ -156,21 +158,20 @@ public class HPClient {
 		int toPos = _IcarusMap.get(tokens[3]);
 		
 		if (Math.abs(fromPos-toPos) > 5) { //it's a jump move - indices differ than more than 5
-			newMove = new Move(fromPos, toPos, !_myColor);
-			newMove.makeJump(true);
+			newMove = new Move(!_myColor); 
+			newMove.addAction(fromPos, toPos, true);
 			if (tokens.length > 4) { //it's a multi-jump!
 				for (int i=3 ; i < tokens.length-2 ; i += 2 ) {
 					fromPos = _IcarusMap.get(tokens[i]);
 					toPos = _IcarusMap.get(tokens[i+2]);
-					newMove.addJump(fromPos, toPos);
+					newMove.addAction(fromPos, toPos, true);
 				}
 			}
-
 		} else { //it's a regular move
-			newMove = new Move(fromPos, toPos, !_myColor);
+			newMove = new Move(!_myColor);
+			newMove.addAction(fromPos, toPos, false);
 		}
 		return newMove;
-		
 	}
 	
 	

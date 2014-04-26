@@ -1,25 +1,24 @@
-package horsepower.Search;
+package horsepower_search;
 
-import horsepower.Checkers.*;
+import horsepower_checkers.*;
 
 public class MiniMaxSearcher {
 
 	private int _depth = 0;
 	private int _recurCount;
+	private int _totalRecursion = 0;
 	
 	public MiniMaxSearcher() {	}
 	
 	
 	public Move minimaxDecision(Board board, int depth){
-		
-		_recurCount = 0;
-		
 		double vBest = Double.NEGATIVE_INFINITY;
 		double v;
 		Move bestAction = null;
 		
 		for (Move a : board.getActions()) {
 			_depth = depth;
+			_recurCount = 0;
 			v = minValue(board.result(a));
 			if (v > vBest) {
 				vBest = v;
@@ -36,6 +35,7 @@ public class MiniMaxSearcher {
 		} else {
 			_depth--;
 			_recurCount++;
+			_totalRecursion++;
 			double v = Double.NEGATIVE_INFINITY;
 			for (Move s : board.getActions()) {
 				v = Math.max(v, minValue(board.result(s)));
@@ -51,6 +51,7 @@ public class MiniMaxSearcher {
 		} else {
 			_depth--;
 			_recurCount++;
+			_totalRecursion++;
 			double v = Double.POSITIVE_INFINITY;
 			for (Move s : board.getActions()) {
 				v = Math.min(v, maxValue(board.result(s)));
@@ -59,4 +60,8 @@ public class MiniMaxSearcher {
 		}
 	}
 	
+	
+	public int getFinalRecursion() {
+		return _totalRecursion;
+	}
 }
