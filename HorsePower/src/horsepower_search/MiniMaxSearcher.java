@@ -16,6 +16,7 @@ public class MiniMaxSearcher {
 		double v;
 		Move bestAction = null;
 		
+		int tempCount = 0;
 		for (Move a : board.getActions()) {
 			_depth = depth;
 			_recurCount = 0;
@@ -24,8 +25,9 @@ public class MiniMaxSearcher {
 				vBest = v;
 				bestAction = a;
 			}
+			tempCount = tempCount+_recurCount;
 		}
-		System.out.println("Total recursive calls : "+_recurCount);
+		System.out.println("Total recursive calls : "+tempCount);
 		return bestAction;
 	}
 	

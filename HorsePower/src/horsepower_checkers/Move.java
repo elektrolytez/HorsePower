@@ -9,6 +9,8 @@ public class Move {
 	private Boolean _player, _isActionAJump;
 	private String[] _converterTool;
 	
+	private boolean _testFlag=false;
+	
 	public Move(Boolean player) {
 		_player = player;
 	}
@@ -107,6 +109,14 @@ public class Move {
 		_converterTool[33] = "(0:2)";
 		_converterTool[34] = "(0:4)";
 		_converterTool[35] = "(0:6)";
+	}
+	
+	
+	public Boolean getTestFlag() {
+		return _testFlag;
+	}
+	public void setTestFlag(boolean b) {
+		_testFlag = b;
 	}
 }
 

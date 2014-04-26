@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -104,6 +104,9 @@ public class HPClient {
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
 				readMessage = HPClient.readAndEcho(); // show the move received by the server
 				_board = _board.result(nextMove); // write the move to the board
+//				if (nextMove.getTestFlag()) {
+//					System.out.println("@@@@@@@@@@@@@@@ LOC *32* IS NOW : " + _board.getBoard()[32]);
+//				}
 				System.out.println(_board.toString()); // print the board
 				readMessage = HPClient.readAndEcho(); // opponent's move
 				

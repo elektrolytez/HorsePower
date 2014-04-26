@@ -27,6 +27,8 @@ public class Board {
 	private String _oppKing;
 	private int _oppPceCount;
 	
+	private boolean _testFlag=false;
+	
 	
 	public Board(HPClient HPClient,String[] board, Boolean player) {
 
@@ -54,6 +56,7 @@ public class Board {
 		_HPPlayer = _HPClient.getColor();
 		this.findActions();
 		_possibleMoves = this.getActions();
+		//System.out.println(_possibleMoves.size());
 	}
 	
 	public void initBlackValues() {
@@ -232,9 +235,9 @@ public class Board {
 				_kingsList.add(i);
 			} else if (_oppSymbols.contains(val)) {
 				_oppPceCount++;
-				if (val.equals(_oppKing)) { //kings worth 2 pieces
-					_oppPceCount++;
-				}
+//				if (val.equals(_oppKing)) { //kings worth 2 pieces
+//					_oppPceCount++;
+//				}
 			} else {
 				//do nothing - tile content is not relevant
 			}
@@ -311,16 +314,26 @@ public class Board {
 				int jumpedIndex = fromIndex - (fromIndex-toIndex)/2; // calculate the index that is being jumped
 				newBoard[fromIndex] = "_";
 				newBoard[jumpedIndex] = "_";
-				
-				//System.out.println("@@@@@@@@@@@@@@@@@@ From Loc : "+fromIndex);
-				//System.out.println("@@@@@@@@@@@@@@@@@@ To Loc : "+toIndex);
-				
 				//test if destination is king row and jumping piece is regular piece
-				if (this.isKingRow(toIndex) && piece.equals(_regPiece)) {
-					if (toIndex==32) {
-						System.out.println("SETTING *LOC* 32 TO BE : " + _kingPiece + " ~ FROM : "+_regPiece);
-						newBoard[32] = _kingPiece;
-					}
+				if (this.isKingUpAction(fromIndex, toIndex, move)) { //this.isKingRow(toIndex) && piece.equals(_regPiece)
+
+					
+					//was using this to debug invalid move
+//					if (toIndex==32) {
+//						//printed at the time of black reg piece double jump to bottom left corner
+//						System.out.println("@@@@@@@@@@@@@@@ SETTING *LOC* 32 TO BE : " + _kingPiece + " ~ FROM : "+_regPiece);
+//						newBoard[32] = _kingPiece;
+//						move.setTestFlag(true);
+//						System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ NEWBOARD @ 32 = "+newBoard[32]);
+//						
+//						Board testBoard = new Board(_HPClient, newBoard, !move.player());
+//						
+//						String[] testString = testBoard.getBoard();
+//						System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEST BOARD @ 32 = "+testString[32]);
+//						System.out.println(testBoard.toString());
+//						System.out.println("TEST BOARD ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+//						
+//					}
 					newBoard[toIndex] = _kingPiece; //if so, make king and end move
 					break;
 				} else { //else continue on your merry way
@@ -332,12 +345,17 @@ public class Board {
 			int toIndex = move.getFirstAct()[1];
 			String piece = _board[fromIndex];
 			newBoard[fromIndex] = "_";
-			if (this.isKingRow(toIndex) && piece.equals(_regPiece)) {
+			if (this.isKingUpAction(fromIndex, toIndex, move)) {
 				newBoard[toIndex] = _kingPiece;
 			} else {
 				newBoard[toIndex] = piece;
 			}
 		}
+		
+		if (move.getTestFlag()) {
+			System.out.println("@@@@@@@@@@@@@@@ LOC *32* ON NEWBOARD IS : " + newBoard[32]);
+		}
+		
 		Board resultBoard = new Board(_HPClient, newBoard, !move.player());
 		return resultBoard;
 	}
@@ -391,37 +409,19 @@ public class Board {
 	
 	public Double evaluateFor(Boolean player) {
 		// eventually the return value will be the result of some function that takes all of the following variables
-		double perPceCount = byPieceCount(player);
+		//double perPceCount = byPieceCount(player);
 		
-		//testing...
-		//double perPceCount = Math.random() * 1000;
+		return Math.random();
 		
-		return perPceCount;
+		
+//		if (_HPPlayer.equals(player)) {
+//			return Math.random();
+//		} else {
+//			return (-1.0)*Math.random();
+//		}
+		
 	}
 
-	
-	public Double byPieceCount(Boolean player) {
-		int _plyrPceCount = _regsList.size() + _kingsList.size()*2;
-		
-		//this is sloppy logic and really confusing to see what is correct - I can explain better in person
-		if (_HPPlayer.equals(player)) {
-			if (_plyrPceCount > _oppPceCount) {
-				return 2.0 + Math.random();
-			} else if (_plyrPceCount == _oppPceCount) { // player is white
-				return 0.0;
-			} else {
-				return -2.0 + Math.random();
-			}
-		} else {
-			if (_plyrPceCount > _oppPceCount) {
-				return -2.0  + Math.random();
-			} else if (_plyrPceCount == _oppPceCount) { // player is white
-				return 0.0;
-			} else {
-				return 2.0  + Math.random();
-			}
-		}
-	}
 	
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~ GETTERS / SETTERS ~@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
@@ -438,6 +438,5 @@ public class Board {
 	public String[] getBoard() {
 		return _board;
 	}
-	
 	
 }
