@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-//import java.util.List;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -60,10 +60,10 @@ public class HPClient {
 			Scanner reader = new Scanner(System.in);
 			HPClient.readAndEcho(); // start message
 			HPClient.readAndEcho(); // ID query
-			_user = reader.next();
+			//_user = reader.next();
 			HPClient.writeMessageAndEcho(_user); // user ID
 			HPClient.readAndEcho(); // password query
-			_pw = reader.next();
+			//_pw = reader.next();
 			HPClient.writeMessage(_pw); // password
 			HPClient.readAndEcho(); // opponent query
 			//_opponent = reader.next();
@@ -92,12 +92,12 @@ public class HPClient {
 			while (!gameOver(readMessage)) {
 				
 				//random valid move - no minimax
-				//List<Move> actions = _board.getActions();
-				//Move nextMove = actions.get((int)(Math.random() * actions.size()));
+				List<Move> actions = _board.getActions();
+				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth and stuff
-				int depth = 3;
-				Move nextMove = _sherlock.minimaxDecision(_board, depth);
+				//int depth = 6;
+				//Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				//System.out.println("");
 				

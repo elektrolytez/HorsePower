@@ -124,7 +124,8 @@ public class Board {
 			nextPosList = findValidNextJumpPos(prevPos, curPos, degOfFreedom);
 		} else {
 			int[] preLoc = lastMove.getLastAct();
-			nextPosList = findValidNextJumpPos(preLoc[0], curPos, degOfFreedom);
+			nextPosList = findValidNextJumpPos(preLoc[0], preLoc[1], degOfFreedom);
+			nextPosList = this.removeLoops(curPos, lastMove, nextPosList);
 		}
 		
 		
@@ -170,14 +171,36 @@ public class Board {
 				regJump.addAction(curPos, nextPos, true);
 			} else {
 				
-				//System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
+				System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
 				
 				regJump.addAction(curPos, nextPos, true);
 				this.findJumpMoves(curPos, nextPos, regJump, degOfFreedom);
 			}
 		}
 	}
-	
+	public List<Integer> removeLoops(int curPos, Move lastMove, List<Integer> nextPosList) {
+		List<int[]> actionList = lastMove.getJumpList();
+		if (actionList.size() >= 4) {
+			
+			for (int[] act : actionList) {
+				if (act[0] == curPos) {
+					int i = nextPosList.indexOf(act[1]);
+					if (i!=-1) {
+						nextPosList.remove(i);
+					}
+				}
+				if (act[1] == curPos) {
+					int i = nextPosList.indexOf(act[0]);
+					if (i!=-1) {
+						nextPosList.remove(i);
+					}
+				}
+			}
+			return nextPosList;
+		} else {
+			return nextPosList;
+		}
+	}
 	public boolean isKingUpAction(int curPos, int nextPos, Move lastMove) {
 		if (this.isKingRow(nextPos)) {
 			if (lastMove == null) {
@@ -200,27 +223,31 @@ public class Board {
 	
 	public List<Integer> findValidNextJumpPos(int prevPos, int curPos, List<Integer> degOfFreedom) {
 		List<Integer> possibleSteps = new ArrayList<Integer>();
-		for (Integer step : degOfFreedom) {
-			if ((curPos + step != prevPos) && (curPos + step*2 != prevPos)) {
-				if (this.validTile(curPos+step)) {
-					if (_oppSymbols.contains(_board[curPos+step])) {
-						possibleSteps.add(curPos + step*2);
+		if (!degOfFreedom.isEmpty()) {
+			for (Integer step : degOfFreedom) {
+				if ((curPos + step != prevPos) && (curPos + step*2 != prevPos)) {
+					if (this.validTile(curPos+step)) {
+						if (_oppSymbols.contains(_board[curPos+step])) {
+							possibleSteps.add(curPos + step*2);
+						}
 					}
 				}
 			}
-		}
-		if (possibleSteps.isEmpty()) {
-			//skip loop and return
-		} else {
-			Iterator<Integer> stepIter = possibleSteps.iterator();
-			while (stepIter.hasNext()) {
-				int s = stepIter.next();
-				if (!this.validMove(s)) {
-					stepIter.remove();
+			if (possibleSteps.isEmpty()) {
+				//skip loop and return
+			} else {
+				Iterator<Integer> stepIter = possibleSteps.iterator();
+				while (stepIter.hasNext()) {
+					int s = stepIter.next();
+					if (!this.validMove(s)) {
+						stepIter.remove();
+					}
 				}
 			}
+			return possibleSteps;
+		} else {
+			return degOfFreedom;
 		}
-		return possibleSteps;
 	}
 	
 	/*
