@@ -7,23 +7,28 @@ public class Move {
 
 	private List<int[]> _actionList = new ArrayList<int[]>();
 	private Boolean _player, _isActionAJump;
+	private Boolean _isFork = false;
 	private String[] _converterTool;
-	
-	private boolean _testFlag=false;
 	
 	public Move(Boolean player) {
 		_player = player;
 	}
 	
 	public Move(Move m) { //move cloner constructor
-		this._actionList = m._actionList;
+		this._actionList = m.getJumpList();
 		this._player = m._player;
 	}
 	
 	public void addAction(int from, int to, boolean isJump) {
 		_isActionAJump = isJump;
 		int[] newJ = {from, to};
+		if (isJump) {
+			System.out.println(this.getMessage()+" ----->>>");
+		}
 		_actionList.add(newJ);
+		if (isJump) {
+			System.out.println(this.getMessage());
+		}
 	}
 	
 	public String getMessage() {
@@ -50,6 +55,9 @@ public class Move {
 	public List<int[]> getJumpList() {
 		return _actionList;
 	}
+	public void setJumpList(List<int[]> l) {
+		this._actionList = l;
+	}
 	public Boolean isMoveAJump() {
 		return _isActionAJump;
 	}
@@ -66,6 +74,12 @@ public class Move {
 	public int[] getLastAct() {
 		int[] lastAct = this._actionList.get(_actionList.size()-1);
 		return lastAct;
+	}
+	public void setIsFork(boolean b) {
+		_isFork = b;
+	}
+	public Boolean isFork() {
+		return _isFork;
 	}
 	
 	/*
@@ -111,13 +125,7 @@ public class Move {
 		_converterTool[35] = "(0:6)";
 	}
 	
-	
-	public Boolean getTestFlag() {
-		return _testFlag;
-	}
-	public void setTestFlag(boolean b) {
-		_testFlag = b;
-	}
+
 }
 
 

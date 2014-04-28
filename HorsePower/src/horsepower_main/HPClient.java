@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user;
-	private static String _pw;
+	private static String _user = "16";
+	private static String _pw= "366379";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
@@ -70,7 +70,7 @@ public class HPClient {
 			HPClient.writeMessageAndEcho(_opponent); // opponent
 			reader.close();
 			
-			HPClient.setGameID(HPClient.readAndEcho().substring(5, 8)); // game
+			HPClient.setGameID(HPClient.readAndEcho().substring(5, 6)); // game
 			HPClient.setColor(HPClient.readAndEcho().substring(6, 11)); // color
 			System.out.println("I am playing as " + getColorAsString()
 					+ " in game number (approximately)" + getGameID()+"00");
@@ -96,10 +96,12 @@ public class HPClient {
 				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth and stuff
-				//int depth = 6;
+				//int depth = 3;
 				//Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
-				//System.out.println("");
+				if (nextMove == null) {
+					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SHIT IS NULL");
+				}
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
 				readMessage = HPClient.readAndEcho(); // show the move received by the server

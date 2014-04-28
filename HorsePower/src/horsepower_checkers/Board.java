@@ -44,8 +44,8 @@ public class Board {
 		//kings have full mobility
 		_kingMovements.add(-4);
 		_kingMovements.add(-5);
-		_kingMovements.add(4);
 		_kingMovements.add(5);
+		_kingMovements.add(4);
 
 		if (board == null) {
 			this.initBoard();
@@ -125,39 +125,115 @@ public class Board {
 		} else {
 			int[] preLoc = lastMove.getLastAct();
 			nextPosList = findValidNextJumpPos(preLoc[0], preLoc[1], degOfFreedom);
-			nextPosList = this.removeLoops(curPos, lastMove, nextPosList);
+			nextPosList = this.removeLoops(curPos, lastMove, nextPosList);			// takes care of infinite jump loop problem
+		}
+		int size = nextPosList.size();
+		if (size == 0) { //no more jumps - base case
+			if (lastMove != null) {
+				
+				System.out.println("ADDING TO JUMP LIST :\n"+ lastMove.getMessage());
+				
+				_jumps.add(lastMove);
+				if (lastMove.isFork()) {
+					
+					System.out.println("IS A FORK! ::: "+lastMove.getMessage());
+					
+					lastMove.removeLastAct();
+				}
+			}
+			return;
+		} 
+		
+		else if (size > 1) {
+			
+			for (Integer nextPos : nextPosList) {
+
+				System.out.println("CONSIDERING POS : " + nextPos);
+				if (lastMove != null) {
+					System.out.println("LAST MOVE AFTER CONSIDERING : \n"+lastMove.getMessage());
+				}
+				
+				
+				Move m;
+				if (lastMove == null) {
+					m = new Move(this._playerToMove);
+					
+					System.out.println("FORK JUMP BEFORE ADD :\n"+m.getMessage());
+					
+					m.addAction(curPos, nextPos, true);
+					
+					
+					System.out.println("FORK JUMP AFTER ADD :\n"+m.getMessage());
+
+				} else {
+
+					List<int[]> lastMoveHistory = lastMove.getJumpList();
+					m = new Move(lastMove.player());
+					m.setJumpList(lastMoveHistory);
+					m.setIsFork(true);
+
+					m.addAction(curPos, nextPos, true);
+					
+					System.out.println(m==lastMove);
+					System.out.println("LAST MOVE : \n"+lastMove.getMessage());
+					System.out.println("FORK JUMP :\n"+m.getMessage());
+
+				}
+				if (!this.isKingUpAction(curPos, nextPos, lastMove)  ) {
+					System.out.println("RECURSION CALL WITH MOVE == "+m.getMessage());
+					this.findJumpMoves(curPos, nextPos, m, degOfFreedom);
+				} else {
+					
+					System.out.println("ADDING KING UP MOVE TO JUMP LIST :\n"+m.getMessage());
+					
+					_jumps.add(m);
+				}
+
+			}
 		}
 		
 		
-		int size = nextPosList.size();
-		if (size == 0) { //no more jumps - base case
-			return;
-		} else if (size > 1) { // multiple moves to choose from, recurse on all of them.
-			for (Integer nextPos : nextPosList) {
-				
-				//printed at multi-jumps and fork-actions
-				//System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
-				
-				if (this.isKingUpAction(curPos, nextPos, lastMove)) {
-					break; // move is over - stop evaluating any further
-				} else {
-					Move forkJump;
-					if (lastMove == null) {
-						forkJump = new Move(_playerToMove);
-						_jumps.add(forkJump);
-					} else {
-						forkJump = new Move(lastMove);
-						forkJump.removeLastAct();
-						_jumps.add(forkJump);
-					}
-					forkJump.addAction(curPos, nextPos, true);
-					
-					//System.out.println(forkJump.getMessage());
-					
-					this.findJumpMoves(curPos, nextPos, forkJump, degOfFreedom);
-				}
-			}
-		} else { //one move to analyze
+//		else if (size > 1) { // multiple moves to choose from, recurse on all of them.
+//			for (Integer nextPos : nextPosList) {
+//				
+//				System.out.println("NEXT POSSIBLE POS:   " + nextPos);
+//				
+//				//printed at multi-jumps and fork-actions
+//				//System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
+//				
+//				if (this.isKingUpAction(curPos, nextPos, lastMove)) {
+//					if (lastMove != null) {
+//						System.out.println("@@ IN KING @@ ~~ FORK JUMP FROM LAST MOVE BEFORE REMOVELAST ACT :\n"+lastMove.getMessage());
+//					}
+//					lastMove.addAction(curPos, nextPos, true);
+//					break; // move is over - stop evaluating any further
+//				} else {
+//					Move forkJump;
+//					if (lastMove == null) {
+//						forkJump = new Move(_playerToMove);
+//						//_jumps.add(forkJump);
+//					} else {
+//						forkJump = new Move(lastMove);
+//						
+//						System.out.println("FORK JUMP FROM LAST MOVE BEFORE REMOVELAST ACT :\n"+forkJump.getMessage());
+//								
+//						//forkJump.removeLastAct();
+//						
+//						//System.out.println("FORK JUMP FROM LAST MOVE AFTER REMOVELASTACT :\n"+forkJump.getMessage());
+//						
+//						//_jumps.add(forkJump);
+//						
+//					}
+//					forkJump.addAction(curPos, nextPos, true);
+//					
+//					//System.out.println(forkJump.getMessage());
+//					
+//					this.findJumpMoves(curPos, nextPos, forkJump, degOfFreedom);
+//				}
+//			}
+//		} 
+		
+		else { //one move to analyze
 			Move regJump;
 			if (lastMove == null) {
 				regJump = new Move(_playerToMove);
@@ -167,12 +243,8 @@ public class Board {
 			}
 			int nextPos = nextPosList.get(0);
 			if (this.isKingUpAction(curPos, nextPos, lastMove)) {
-				// move is over - stop recursively evaluating
 				regJump.addAction(curPos, nextPos, true);
 			} else {
-				
-				System.out.println("FROM LOC: "+curPos+"  CONSIDERING: "+nextPos);
-				
 				regJump.addAction(curPos, nextPos, true);
 				this.findJumpMoves(curPos, nextPos, regJump, degOfFreedom);
 			}
@@ -344,6 +416,7 @@ public class Board {
 				//test if destination is king row and jumping piece is regular piece
 				if (this.isKingUpAction(fromIndex, toIndex, move)) { //this.isKingRow(toIndex) && piece.equals(_regPiece)
 
+					System.out.println("KING UP FROM:" + fromIndex + "   TO: "+toIndex);
 					
 					//was using this to debug invalid move
 //					if (toIndex==32) {
@@ -379,10 +452,6 @@ public class Board {
 			}
 		}
 		
-		if (move.getTestFlag()) {
-			System.out.println("@@@@@@@@@@@@@@@ LOC *32* ON NEWBOARD IS : " + newBoard[32]);
-		}
-		
 		Board resultBoard = new Board(_HPClient, newBoard, !move.player());
 		return resultBoard;
 	}
@@ -392,15 +461,16 @@ public class Board {
 	 */
 	public String toString() {
 		String[] b = _board;
-		String row7 = "| # | "+b[1]+" | # | "+b[2]+" | # | "+b[3]+" | # | "+b[4]+" |\n";
-		String row6 = "| "+b[5]+" | # | "+b[6]+" | # | "+b[7]+" | # | "+b[8]+" | # |\n";
-		String row5 = "| # | "+b[10]+" | # | "+b[11]+" | # | "+b[12]+" | # | "+b[13]+" |\n";
-		String row4 = "| "+b[14]+" | # | "+b[15]+" | # | "+b[16]+" | # | "+b[17]+" | # |\n";
-		String row3 = "| # | "+b[19]+" | # | "+b[20]+" | # | "+b[21]+" | # | "+b[22]+" |\n";
-		String row2 = "| "+b[23]+" | # | "+b[24]+" | # | "+b[25]+" | # | "+b[26]+" | # |\n";
-		String row1 = "| # | "+b[28]+" | # | "+b[29]+" | # | "+b[30]+" | # | "+b[31]+" |\n";
-		String row0 = "| "+b[32]+" | # | "+b[33]+" | # | "+b[34]+" | # | "+b[35]+" | # |\n";
-		String boardAsString = row7+row6+row5+row4+row3+row2+row1+row0;
+		String row7 = "7| # | "+b[1]+" | # | "+b[2]+" | # | "+b[3]+" | # | "+b[4]+" |\n";
+		String row6 = "6| "+b[5]+" | # | "+b[6]+" | # | "+b[7]+" | # | "+b[8]+" | # |\n";
+		String row5 = "5| # | "+b[10]+" | # | "+b[11]+" | # | "+b[12]+" | # | "+b[13]+" |\n";
+		String row4 = "4| "+b[14]+" | # | "+b[15]+" | # | "+b[16]+" | # | "+b[17]+" | # |\n";
+		String row3 = "3| # | "+b[19]+" | # | "+b[20]+" | # | "+b[21]+" | # | "+b[22]+" |\n";
+		String row2 = "2| "+b[23]+" | # | "+b[24]+" | # | "+b[25]+" | # | "+b[26]+" | # |\n";
+		String row1 = "1| # | "+b[28]+" | # | "+b[29]+" | # | "+b[30]+" | # | "+b[31]+" |\n";
+		String row0 = "0| "+b[32]+" | # | "+b[33]+" | # | "+b[34]+" | # | "+b[35]+" | # |\n";
+		String rowLabel = "   0   1   2   3   4   5   6   7";
+		String boardAsString = row7+row6+row5+row4+row3+row2+row1+row0+rowLabel;
 		return boardAsString;
 	}
 	
@@ -438,14 +508,14 @@ public class Board {
 		// eventually the return value will be the result of some function that takes all of the following variables
 		//double perPceCount = byPieceCount(player);
 		
-		return Math.random();
+		//return Math.random();
 		
 		
-//		if (_HPPlayer.equals(player)) {
-//			return Math.random();
-//		} else {
-//			return (-1.0)*Math.random();
-//		}
+		if (_HPPlayer.equals(player)) {
+			return Math.random();
+		} else {
+			return (-1.0)*Math.random();
+		}
 		
 	}
 
