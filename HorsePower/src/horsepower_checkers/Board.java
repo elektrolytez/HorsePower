@@ -130,36 +130,36 @@ public class Board {
 		int size = nextPosList.size();
 		if (size == 0) { //no more jumps - base case
 			if (lastMove != null) {
-				System.out.println("ADDING TO JUMP LIST :\n"+ lastMove.getMessage());
+				//System.out.println("ADDING TO JUMP LIST :\n"+ lastMove.getMessage());
 				_jumps.add(lastMove);
 			}
 			return;
 		} else if (size > 1) {
 			for (Integer nextPos : nextPosList) {
-				System.out.println("CONSIDERING POS : " + nextPos);
+				//System.out.println("CONSIDERING POS : " + nextPos);
 				if (lastMove != null) {
-					System.out.println("LAST MOVE AFTER CONSIDERING : \n"+lastMove.getMessage());
+					//System.out.println("LAST MOVE AFTER CONSIDERING : \n"+lastMove.getMessage());
 				}
 				Move m;
 				if (lastMove == null) {
 					m = new Move(this._playerToMove);
-					System.out.println("FORK JUMP BEFORE ADD :\n"+m.getMessage());
+					//System.out.println("FORK JUMP BEFORE ADD :\n"+m.getMessage());
 					m.addAction(curPos, nextPos, true);
-					System.out.println("FORK JUMP AFTER ADD :\n"+m.getMessage());
+					//System.out.println("FORK JUMP AFTER ADD :\n"+m.getMessage());
 				} else {
 					List<int[]> lastMoveHistory = lastMove.getJumpListCopy();
 					m = new Move(lastMove.player());
 					m.setJumpList(lastMoveHistory);
-					System.out.println("LAST MOVE BEFORE M.ADD : \n"+lastMove.getMessage());
+					//System.out.println("LAST MOVE BEFORE M.ADD : \n"+lastMove.getMessage());
 					m.addAction(curPos, nextPos, true);
-					System.out.println("LAST MOVE AFTER M.ADD : \n"+lastMove.getMessage());
-					System.out.println("FORK JUMP :\n"+m.getMessage());
+					//System.out.println("LAST MOVE AFTER M.ADD : \n"+lastMove.getMessage());
+					//System.out.println("FORK JUMP :\n"+m.getMessage());
 				}
 				if (!this.isKingUpAction(curPos, nextPos, lastMove)  ) {
-					System.out.println("RECURSION CALL WITH MOVE == "+m.getMessage());
+					//System.out.println("RECURSION CALL WITH MOVE == "+m.getMessage());
 					this.findJumpMoves(curPos, nextPos, m, degOfFreedom);
 				} else {
-					System.out.println("ADDING KING UP MOVE TO JUMP LIST :\n"+m.getMessage());
+					//System.out.println("ADDING KING UP MOVE TO JUMP LIST :\n"+m.getMessage());
 					_jumps.add(m);
 				}
 			}
