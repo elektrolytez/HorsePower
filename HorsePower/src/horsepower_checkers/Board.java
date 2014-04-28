@@ -10,7 +10,7 @@ import java.util.List;
 public class Board {
 
 	private HPClient _HPClient;
-	private String[] _board; // samuels board representation
+	private String[] _board; // samuels' board representation
 	private List<Move> _actions = new ArrayList<Move>();
 	private List<Move> _jumps = new ArrayList<Move>();
 	private List<Move> _possibleMoves = new ArrayList<Move>(); //stores _actions if&f _jumps is empty
@@ -439,14 +439,14 @@ public class Board {
 		// eventually the return value will be the result of some function that takes all of the following variables
 		//double perPceCount = byPieceCount(player);
 		
-		//return Math.random();
+		return Math.random();
 		
 		
-		if (_HPPlayer.equals(player)) {
-			return Math.random();
-		} else {
-			return (-1.0)*Math.random();
-		}
+//		if (_HPPlayer.equals(player)) {
+//			return Math.random();
+//		} else {
+//			return (-1.0)*Math.random();
+//		}
 		
 	}
 

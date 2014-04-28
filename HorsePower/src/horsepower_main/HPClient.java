@@ -92,12 +92,12 @@ public class HPClient {
 			while (!gameOver(readMessage)) {
 				
 				//random valid move - no minimax
-				List<Move> actions = _board.getActions();
-				Move nextMove = actions.get((int)(Math.random() * actions.size()));
+//				List<Move> actions = _board.getActions();
+//				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth and stuff
-				//int depth = 3;
-				//Move nextMove = _sherlock.minimaxDecision(_board, depth);
+				int depth = 3;
+				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				if (nextMove == null) {
 					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SHIT IS NULL");
