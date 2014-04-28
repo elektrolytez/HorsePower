@@ -7,7 +7,6 @@ public class Move {
 
 	private List<int[]> _actionList = new ArrayList<int[]>();
 	private Boolean _player, _isActionAJump;
-	private Boolean _isFork = false;
 	private String[] _converterTool;
 	
 	public Move(Boolean player) {
@@ -55,6 +54,10 @@ public class Move {
 	public List<int[]> getJumpList() {
 		return _actionList;
 	}
+	public List<int[]> getJumpListCopy() {
+		List<int[]> copy = new ArrayList<int[]>(_actionList);
+		return copy;
+	}
 	public void setJumpList(List<int[]> l) {
 		this._actionList = l;
 	}
@@ -74,12 +77,6 @@ public class Move {
 	public int[] getLastAct() {
 		int[] lastAct = this._actionList.get(_actionList.size()-1);
 		return lastAct;
-	}
-	public void setIsFork(boolean b) {
-		_isFork = b;
-	}
-	public Boolean isFork() {
-		return _isFork;
 	}
 	
 	/*
