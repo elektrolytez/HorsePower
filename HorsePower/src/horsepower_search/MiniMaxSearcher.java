@@ -4,7 +4,6 @@ import horsepower_checkers.*;
 
 public class MiniMaxSearcher {
 
-	private int _depth = 0;
 	private int _recurCount;
 	private int _totalRecursion = 0;
 	
@@ -18,9 +17,8 @@ public class MiniMaxSearcher {
 		
 		int tempCount = 0;
 		for (Move a : board.getActions()) {
-			_depth = depth;
 			_recurCount = 0;
-			v = minValue(board.result(a));
+			v = maxValue(board.result(a), depth);
 			if (v > vBest) {
 				vBest = v;
 				bestAction = a;
@@ -31,32 +29,30 @@ public class MiniMaxSearcher {
 		return bestAction;
 	}
 	
-	public double maxValue(Board board){
-		if (board.isTerminal(_depth)) {
+	
+	public double maxValue(Board board, int depth){
+		if (board.isTerminal(depth)) {
 			return board.evaluateFor(board.getPlayer());
 		} else {
-			_depth--;
 			_recurCount++;
 			_totalRecursion++;
 			double v = Double.NEGATIVE_INFINITY;
 			for (Move s : board.getActions()) {
-				v = Math.max(v, minValue(board.result(s)));
+				v = Math.max(v, minValue(board.result(s), depth - 1));
 			}
-			//decrement depth by 1
 			return v;	
 		}
 	}
 	
-	public double minValue(Board board){
-		if (board.isTerminal(_depth)) {
+	public double minValue(Board board, int depth){
+		if (board.isTerminal(depth)) {
 			return board.evaluateFor(board.getPlayer());
 		} else {
-			_depth--;
 			_recurCount++;
 			_totalRecursion++;
 			double v = Double.POSITIVE_INFINITY;
 			for (Move s : board.getActions()) {
-				v = Math.min(v, maxValue(board.result(s)));
+				v = Math.min(v, maxValue(board.result(s), depth - 1));
 			}
 			return v;	
 		}
