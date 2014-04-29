@@ -4,7 +4,8 @@ import horsepower_checkers.*;
 
 public class AlphaBeta {
 
-	private int _depth = 0;
+	
+	//private int _depth = 0;
 	private int _recurCount;
 	private int _totalRecursion = 0;
 	private EvalCheckers _eval;
