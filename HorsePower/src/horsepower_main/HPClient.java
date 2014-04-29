@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user;
-	private static String _pw;
+	private static String _user="15";
+	private static String _pw="544075";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
