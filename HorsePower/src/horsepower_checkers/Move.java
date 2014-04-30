@@ -21,13 +21,7 @@ public class Move {
 	public void addAction(int from, int to, boolean isJump) {
 		_isActionAJump = isJump;
 		int[] newJ = {from, to};
-		if (isJump) {
-			System.out.println(this.getMessage()+" ----->>>");
-		}
 		_actionList.add(newJ);
-		if (isJump) {
-			System.out.println(this.getMessage());
-		}
 	}
 	
 	public String getMessage() {
@@ -47,7 +41,6 @@ public class Move {
 				tempMsg = tempMsg + ":" + _converterTool[to];
 			}
 		}
-		
 		return tempMsg;
 	}
 

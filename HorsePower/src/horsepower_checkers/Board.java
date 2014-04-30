@@ -23,11 +23,10 @@ public class Board {
 	private List<Integer> _regsList = new ArrayList<Integer>(); //stores locations of player's regular pieces
 	private List<Integer> _kingsList = new ArrayList<Integer>(); //stores locations of player's king pieces
 	private List<Integer> _kingRowIndices = new ArrayList<Integer>();
+	private List<Integer> _oppKingRowIndices = new ArrayList<Integer>();
 	private static String _oppSymbols;
-	private String _oppKing;
-	private int _oppPceCount;
-	
-	private boolean _testFlag=false;
+	private String _oppKing, _oppRegPce;
+	private int _oppRegCount, _oppKingCount;
 	
 	
 	public Board(HPClient HPClient,String[] board, Boolean player) {
@@ -61,6 +60,7 @@ public class Board {
 	
 	public void initBlackValues() {
 		_oppSymbols = "w Q";
+		_oppRegPce = "w";
 		_oppKing = "Q";
 		_regPiece = "b";
 		_kingPiece = "K";
@@ -70,9 +70,14 @@ public class Board {
 		_kingRowIndices.add(33);
 		_kingRowIndices.add(34);
 		_kingRowIndices.add(35);
+		_oppKingRowIndices.add(1);
+		_oppKingRowIndices.add(2);
+		_oppKingRowIndices.add(3);
+		_oppKingRowIndices.add(4);
 	}
 	public void initWhiteValues() {
 		_oppSymbols = "b K"; //opponent's pieces
+		_oppRegPce = "b";
 		_oppKing = "K";
 		_regPiece = "w";
 		_kingPiece = "Q";
@@ -82,13 +87,16 @@ public class Board {
 		_kingRowIndices.add(2);
 		_kingRowIndices.add(3);
 		_kingRowIndices.add(4);
+		_oppKingRowIndices.add(32);
+		_oppKingRowIndices.add(33);
+		_oppKingRowIndices.add(34);
+		_oppKingRowIndices.add(35);
 	}
 	
 	
 	public void findActions() {
 		// find actions
 		this.findPieces();
-		
 		for (Integer regPos : _regsList) {
 			this.findJumpMoves(regPos, regPos, null, _regMovements); //passing with previous pos = start pos
 		}
@@ -136,30 +144,19 @@ public class Board {
 			return;
 		} else if (size > 1) {
 			for (Integer nextPos : nextPosList) {
-				//System.out.println("CONSIDERING POS : " + nextPos);
-				if (lastMove != null) {
-					//System.out.println("LAST MOVE AFTER CONSIDERING : \n"+lastMove.getMessage());
-				}
 				Move m;
 				if (lastMove == null) {
 					m = new Move(this._playerToMove);
-					//System.out.println("FORK JUMP BEFORE ADD :\n"+m.getMessage());
 					m.addAction(curPos, nextPos, true);
-					//System.out.println("FORK JUMP AFTER ADD :\n"+m.getMessage());
 				} else {
 					List<int[]> lastMoveHistory = lastMove.getJumpListCopy();
 					m = new Move(lastMove.player());
 					m.setJumpList(lastMoveHistory);
-					//System.out.println("LAST MOVE BEFORE M.ADD : \n"+lastMove.getMessage());
 					m.addAction(curPos, nextPos, true);
-					//System.out.println("LAST MOVE AFTER M.ADD : \n"+lastMove.getMessage());
-					//System.out.println("FORK JUMP :\n"+m.getMessage());
 				}
 				if (!this.isKingUpAction(curPos, nextPos, lastMove)  ) {
-					//System.out.println("RECURSION CALL WITH MOVE == "+m.getMessage());
 					this.findJumpMoves(curPos, nextPos, m, degOfFreedom);
 				} else {
-					//System.out.println("ADDING KING UP MOVE TO JUMP LIST :\n"+m.getMessage());
 					_jumps.add(m);
 				}
 			}
@@ -169,7 +166,9 @@ public class Board {
 				regJump = new Move(_playerToMove);
 				_jumps.add(regJump);
 			} else {
-				regJump = lastMove;
+				List<int[]> lastMoveHistory = lastMove.getJumpListCopy();
+				regJump = new Move(_playerToMove);
+				regJump.setJumpList(lastMoveHistory);
 			}
 			int nextPos = nextPosList.get(0);
 			if (this.isKingUpAction(curPos, nextPos, lastMove)) {
@@ -264,12 +263,10 @@ public class Board {
 			} else if (val == _kingPiece) {
 				_kingsList.add(i);
 			} else if (_oppSymbols.contains(val)) {
-				_oppPceCount++;
-//				if (val.equals(_oppKing)) { //kings worth 2 pieces
-//					_oppPceCount++;
-//				}
-			} else {
-				//do nothing - tile content is not relevant
+				_oppRegCount++;
+				if (val.equals(_oppKing)) { //kings worth 2 pieces
+					_oppKingCount++;
+				}
 			}
 		}
 	}
@@ -322,22 +319,17 @@ public class Board {
 			 }
 		 }
 	 }
-	
 
 	/*
 	 * Takes in a Move and returns a new board that resembles game state after evaluating the move
 	 */
 	public Board result(Move move) {
-		//make copy of cur board
 		String[] newBoard = new String[36];
 		for (int i=0 ; i<36 ; i++) {
 			newBoard[i] = _board[i];
 		}
 		if (move.isMoveAJump()) { //move is a jump move
 			String piece = _board[move.getFirstAct()[0]];
-			
-			//System.out.println("@@@@@@@@@@@@@@@@@@ Moving piece : "+piece);
-			
 			for (int[] jump : move.getJumpList()) { //combine all jump moves if move is multi-jump
 				int fromIndex = jump[0];
 				int toIndex = jump[1];
@@ -346,27 +338,8 @@ public class Board {
 				newBoard[jumpedIndex] = "_";
 				//test if destination is king row and jumping piece is regular piece
 				if (this.isKingUpAction(fromIndex, toIndex, move)) { //this.isKingRow(toIndex) && piece.equals(_regPiece)
-
-					System.out.println("KING UP FROM:" + fromIndex + "   TO: "+toIndex);
-					
-					//was using this to debug invalid move
-//					if (toIndex==32) {
-//						//printed at the time of black reg piece double jump to bottom left corner
-//						System.out.println("@@@@@@@@@@@@@@@ SETTING *LOC* 32 TO BE : " + _kingPiece + " ~ FROM : "+_regPiece);
-//						newBoard[32] = _kingPiece;
-//						move.setTestFlag(true);
-//						System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ NEWBOARD @ 32 = "+newBoard[32]);
-//						
-//						Board testBoard = new Board(_HPClient, newBoard, !move.player());
-//						
-//						String[] testString = testBoard.getBoard();
-//						System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TEST BOARD @ 32 = "+testString[32]);
-//						System.out.println(testBoard.toString());
-//						System.out.println("TEST BOARD ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-//						
-//					}
 					newBoard[toIndex] = _kingPiece; //if so, make king and end move
-					break;
+					//break;
 				} else { //else continue on your merry way
 					newBoard[toIndex] = piece;
 				}	
@@ -382,9 +355,24 @@ public class Board {
 				newBoard[toIndex] = piece;
 			}
 		}
-		
 		Board resultBoard = new Board(_HPClient, newBoard, !move.player());
 		return resultBoard;
+	}
+	
+	public void updateKingPositions() {
+		//only do these checks if there are still reg pieces on board
+		if ((_regsList.size() + _oppRegCount) > 0) {
+			for (Integer p : _kingRowIndices) {
+				if (_board[p].equals(_regPiece)) {
+					_board[p] = _kingPiece;
+				}
+			}
+			for (Integer p : _oppKingRowIndices) {
+				if (_board[p].equals(_oppRegPce)) {
+					_board[p] = _oppKing;
+				}
+			}
+		}
 	}
 	
 	/*
@@ -440,13 +428,6 @@ public class Board {
 		//double perPceCount = byPieceCount(player);
 		
 		return Math.random();
-		
-		
-//		if (_HPPlayer.equals(player)) {
-//			return Math.random();
-//		} else {
-//			return (-1.0)*Math.random();
-//		}
 		
 	}
 

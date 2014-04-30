@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user;
-	private static String _pw;
+	private static String _user = "16";
+	private static String _pw = "366379";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
@@ -99,16 +99,11 @@ public class HPClient {
 				int depth = 3;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
-				if (nextMove == null) {
-					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SHIT IS NULL");
-				}
-				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
 				readMessage = HPClient.readAndEcho(); // show the move received by the server
 				_board = _board.result(nextMove); // write the move to the board
-//				if (nextMove.getTestFlag()) {
-//					System.out.println("@@@@@@@@@@@@@@@ LOC *32* IS NOW : " + _board.getBoard()[32]);
-//				}
+				_board.updateKingPositions();
+				
 				System.out.println(_board.toString()); // print the board
 				readMessage = HPClient.readAndEcho(); // opponent's move
 				
@@ -116,6 +111,7 @@ public class HPClient {
 				
 				Move serverMove = convertMove(readMessage);
 				_board = _board.result(serverMove);// write the move to the board
+				//_board.updateKingPositions();
 				System.out.println(_board.toString()); // show the move
 				readMessage = HPClient.readAndEcho(); // move query
 			}
@@ -152,14 +148,11 @@ public class HPClient {
 	 * Converts from server's (X:X):(X:X).. notation to a new Move object with valid samuels indices
 	 */
 	public static Move convertMove(String serverMove) {
-		
 		Move newMove = null;
 		String delims = "[()]+";
 		String[] tokens = serverMove.split(delims);
-		
 		int fromPos = _IcarusMap.get(tokens[1]);
 		int toPos = _IcarusMap.get(tokens[3]);
-		
 		if (Math.abs(fromPos-toPos) > 5) { //it's a jump move - indices differ than more than 5
 			newMove = new Move(!_myColor); 
 			newMove.addAction(fromPos, toPos, true);
@@ -177,7 +170,6 @@ public class HPClient {
 		return newMove;
 	}
 	
-	
 	/*
 	 * ~~~~~~~~~~~~~~~ Server Communication Methods ~~~~~~~~~~~~~~~
 	 */
@@ -186,18 +178,15 @@ public class HPClient {
 		System.out.println("IN: " + readMessage);
 		return readMessage;
 	}
-
 	public void writeMessage(String message) throws IOException {
 		_out.print(message + "\r\n");
 		_out.flush();
 	}
-
 	public void writeMessageAndEcho(String message) throws IOException {
 		_out.print(message + "\r\n");
 		_out.flush();
 		System.out.println("OUT: " + message);
 	}
-	
 	private Socket openSocket(String address,int port) {
 		try {
 			_socket = new Socket(address, port);
@@ -255,7 +244,6 @@ public class HPClient {
 	 * adding map key,values for converting between server moves and our Move objects with
 	 * samuel's indices
 	 * 
-	 * if you guys object to this since it's O(N) for look-up I'm fine with modifying.
 	 */
 	public void makeIcarusConverter() {
 		_IcarusMap.put("7:1", 1);
