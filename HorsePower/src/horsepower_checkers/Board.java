@@ -28,6 +28,9 @@ public class Board {
 	private String _oppKing, _oppRegPce;
 	private int _oppRegCount, _oppKingCount;
 	
+	// ~~~~~~~~~~~~~~~~ Evaluation Variables ~~~~~~~~~~~~~~
+	private double MOC2, KCENT, MOC4, MODE3, DEMMO, MOVE, ADV, MODE2, BACK, CNTR, THRET, MOC3;
+	
 	
 	public Board(HPClient HPClient,String[] board, Boolean player) {
 
@@ -420,14 +423,74 @@ public class Board {
 	 * 								..needs modifications
 	 */
 	
-	public Double evaluateFor(Boolean player) {
-		// eventually the return value will be the result of some function that takes all of the following variables
-		//double perPceCount = byPieceCount(player);
+	public Double evaluateFor(Board prevBoard, Boolean player) {
+		//MOC2, KCENT, MOC4, MODE3, DEMMO, MOVE, ADV, MODE2, BACK, CNTR, THRET, MOC3
 		
 		return Math.random();
 		
 	}
 
+	public double evaluateMOC2() {
+
+		
+		
+		return 0.0;
+	}
+
+	public double evaluateKCENT() {
+
+		return 0.0;
+	}
+
+	public double evaluateMOC4() {
+
+		return 0.0;
+	}
+
+	public double evaluateMODE3() {
+
+		return 0.0;
+	}
+
+	public double evaluateDEMMO() {
+
+		return 0.0;
+	}
+
+	public double evaluateMOVE() {
+
+		return 0.0;
+	}
+
+	public double evaluateADV() {
+
+		return 0.0;
+	}
+
+	public double evaluateMODE2() {
+
+		return 0.0;
+	}
+
+	public double evaluateBACK() {
+
+		return 0.0;
+	}
+
+	public double evaluateCNTR() {
+
+		return 0.0;
+	}
+
+	public double evaluateTHRET() {
+
+		return 0.0;
+	}
+
+	public double evaluateMOC3() {
+
+		return 0.0;
+	}
 	
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~ GETTERS / SETTERS ~@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
@@ -448,4 +511,18 @@ public class Board {
 		return _possibleMoves;
 	}
 	
+	public double getMOC2() {	return MOC2;	}
+	public double getKCENT() {	return KCENT;	}
+	public double getMOC4() {	return MOC4;	}
+	public double getMODE3() {	return MODE3;	}
+	public double getDEMMO() {	return DEMMO;	}
+	public double getMOVE() {	return MOVE;	}
+	public double getADV() {	return ADV;	}
+	public double getMODE2() {	return MODE2;	}
+	public double getBACK() {	return BACK;	}
+	public double getCNTR() {	return CNTR;	}
+	public double getTHRET() {	return THRET;	}
+	public double getMOC3() {	return MOC3;	}
+	
 }
+

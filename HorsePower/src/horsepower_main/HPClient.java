@@ -96,16 +96,8 @@ public class HPClient {
 //				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth
-				int depth = 4;
+				int depth = 5;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
-				
-//				if (nextMove.getJumpList().size() >= 2) {
-//					System.out.println("-----> CHOSEN MOVE IS MULTI MOVE");
-//				}
-//				System.out.println("----------------->POSSIBLE MOVES");
-//				for (Move m : _board.possibleMoves()) {
-//					System.out.println(m.getMessage());
-//				}
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
 				readMessage = HPClient.readAndEcho(); // show the move received by the server
