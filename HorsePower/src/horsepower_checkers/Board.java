@@ -133,12 +133,14 @@ public class Board {
 		} else {
 			int[] preLoc = lastMove.getLastAct();
 			nextPosList = findValidNextJumpPos(preLoc[0], preLoc[1], degOfFreedom);
-			nextPosList = this.removeLoops(curPos, lastMove, nextPosList);			// takes care of infinite jump loop problem
+			// takes care of infinite jump loop problem
+			if (lastMove.getJumpList().size() >= 4) {
+				nextPosList = this.removeLoops(curPos, lastMove, nextPosList);
+			}
 		}
 		int size = nextPosList.size();
 		if (size == 0) { //no more jumps - base case
 			if (lastMove != null) {
-				//System.out.println("ADDING TO JUMP LIST :\n"+ lastMove.getMessage());
 				_jumps.add(lastMove);
 			}
 			return;
@@ -164,7 +166,6 @@ public class Board {
 			Move regJump;
 			if (lastMove == null) {
 				regJump = new Move(_playerToMove);
-				_jumps.add(regJump);
 			} else {
 				List<int[]> lastMoveHistory = lastMove.getJumpListCopy();
 				regJump = new Move(_playerToMove);
@@ -180,28 +181,24 @@ public class Board {
 			}
 		}
 	}
+
 	public List<Integer> removeLoops(int curPos, Move lastMove, List<Integer> nextPosList) {
-		List<int[]> actionList = lastMove.getJumpList();
-		if (actionList.size() >= 4) {
-			
-			for (int[] act : actionList) {
-				if (act[0] == curPos) {
-					int i = nextPosList.indexOf(act[1]);
-					if (i!=-1) {
-						nextPosList.remove(i);
-					}
-				}
-				if (act[1] == curPos) {
-					int i = nextPosList.indexOf(act[0]);
-					if (i!=-1) {
-						nextPosList.remove(i);
-					}
+		for (int[] act : lastMove.getJumpList()) {
+			if (act[0] == curPos) {
+				int i = nextPosList.indexOf(act[1]);
+				if (i != -1) {
+					nextPosList.remove(i);
 				}
 			}
-			return nextPosList;
-		} else {
-			return nextPosList;
+			if (act[1] == curPos) {
+				int i = nextPosList.indexOf(act[0]);
+				if (i != -1) {
+					nextPosList.remove(i);
+				}
+			}
+
 		}
+		return nextPosList;
 	}
 	public boolean isKingUpAction(int curPos, int nextPos, Move lastMove) {
 		if (this.isKingRow(nextPos)) {
@@ -446,6 +443,9 @@ public class Board {
 	}
 	public String[] getBoard() {
 		return _board;
+	}
+	public List<Move> possibleMoves() {
+		return _possibleMoves;
 	}
 	
 }
