@@ -420,7 +420,6 @@ public class Board {
 
 	/*
 	 * @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~ EVALUATING BOARD ~@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	 * 								..needs modifications
 	 */
 	
 	public Double evaluateFor(Board prevBoard, Boolean player) {
@@ -428,67 +427,48 @@ public class Board {
 		
 		return Math.random();
 		
+//		if (_HPPlayer == player) {
+//			return (double)(_regsList.size()*2+_kingsList.size()*3)-(_oppRegCount*2+_oppKingCount*3);
+//		} else {
+//			return (double)(_oppRegCount*2+_oppKingCount*3)-(_regsList.size()*2+_kingsList.size()*3);
+//		}
+		
 	}
 
 	public double evaluateMOC2() {
-
-		
-		
 		return 0.0;
 	}
-
 	public double evaluateKCENT() {
-
 		return 0.0;
 	}
-
 	public double evaluateMOC4() {
-
 		return 0.0;
 	}
-
 	public double evaluateMODE3() {
-
 		return 0.0;
 	}
-
 	public double evaluateDEMMO() {
-
 		return 0.0;
 	}
-
 	public double evaluateMOVE() {
-
 		return 0.0;
 	}
-
 	public double evaluateADV() {
-
 		return 0.0;
 	}
-
 	public double evaluateMODE2() {
-
 		return 0.0;
 	}
-
 	public double evaluateBACK() {
-
 		return 0.0;
 	}
-
 	public double evaluateCNTR() {
-
 		return 0.0;
 	}
-
 	public double evaluateTHRET() {
-
 		return 0.0;
 	}
-
 	public double evaluateMOC3() {
-
 		return 0.0;
 	}
 	
