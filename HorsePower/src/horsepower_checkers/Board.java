@@ -419,9 +419,10 @@ public class Board {
 	 * @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~ EVALUATING BOARD ~@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	 */
 	
-	public Double evaluateFor(Boolean player) {
+	public double evaluateFor(Boolean player) {
 		
 		//return Math.random();
+		double _temp = 0, _value = 0; 
 		
 		if (_oppKingCount+_oppRegCount == 0) { //_HPPlayer != player && 
 			//return Double.POSITIVE_INFINITY;
@@ -431,12 +432,50 @@ public class Board {
 			//return Double.NEGATIVE_INFINITY;
 			return -1000000.0;
 		}
+		List<Move> _moves = this.getActions();
+		//List<Move> _best = new ArrayList<Move>();
+		if (_moves.size() != 0) {
+			// if actions are available
+
+			for (Move m : _moves) {
+				if (m.isMoveAJump()) {//if m is a jump
+					_temp = 100 * m.getJumpList().size(); //place holder value
+					
+				}
+				else{//not a jump
+					int fromIndex = m.getFirstAct()[0];
+					int toIndex = m.getLastAct()[1];
+					if (this.isKingUpAction(fromIndex, toIndex, m))
+					{
+						_temp = 40; //place holder value
+					}
+					_temp = 20;
+					
+				}
+				
+				
+				
+				if(_temp > _value) _value = _temp;
+
+			}
+			
+			if (_HPPlayer == player) return _value;
+			else return (_value)*-1.0;
+
+		}
+		
 		
 		if (_HPPlayer == player) {
 			return (double)(_regsList.size()*2+_kingsList.size()*3)-(_oppRegCount*2+_oppKingCount*3);
 		} else {
 			return (double)(_oppRegCount*2+_oppKingCount*3)-(_regsList.size()*2+_kingsList.size()*3);
 		}
+		
+		
+		
+		
+		
+		
 		
 	}
 	

@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user;
-	private static String _pw;
+	private static String _user="15";
+	private static String _pw="544075";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
@@ -95,7 +95,7 @@ public class HPClient {
 //				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth
-				int depth = 5;
+				int depth = 7;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
@@ -131,6 +131,8 @@ public class HPClient {
 		System.out.println("Total Time (ms) : " + time/1000000.0);
 		
 		System.out.println("Total Recursion : " + _sherlock.getFinalRecursion());
+		
+		
 	}
 	
 	
