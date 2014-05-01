@@ -1,5 +1,8 @@
 package horsepower_search;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import horsepower_checkers.*;
 
 public class AlphaBeta {
@@ -32,11 +35,12 @@ public class AlphaBeta {
 		Move bestAction = null;
 
 		int tempCount = 0;
-		for (Move a : board.getActions()) {
-
+		Board _temp = board;
+		double test = Double.MAX_VALUE;
+		for (Move a : _temp.getActions()) {
+			_temp = _temp.result(a);
 			_recurCount = 0;
-			v = alphaBetaMin(board.result(a), alpha, Double.MAX_VALUE,
-					1, 9);
+			v = alphaBetaMin(_temp, alpha, test, 1, 9);
 			if (v > vBest) {
 				vBest = v;
 				bestAction = a;
@@ -72,10 +76,14 @@ public class AlphaBeta {
 			double a = alpha;
 			double max = Double.MIN_VALUE;
 			System.out.print(board.getActions().size());
-			for (Move m : board.getActions()) {
+			List<Move> moves = board.getActions();
+			Board _temp = board;
+			
+			
+			for (Move m : moves) {
 				// pass it a new board that has the following result move,
 				// increase ply by 1
-				double eval = alphaBetaMin(board.result(m), a, beta, ply + 1, maxply);
+				double eval = alphaBetaMin(_temp.result(m), a, beta, ply + 1, maxply);
 
 				if (eval > max)
 					max = eval;
@@ -113,16 +121,18 @@ public class AlphaBeta {
 				return Double.MAX_VALUE;
 				
 				}
+			Board _temp = board; 
 			
-			return _eval.evaluate(board, board.getPlayer());
+			return _eval.evaluate(_temp, _temp.getPlayer());
 		} else {
 			double b = beta;
 			double min = Double.MAX_VALUE;
-			
-			for (Move m : board.getActions()) {
+			List<Move> moves = board.getActions();
+			Board _temp = board;
+			for (Move m : moves) {
 				// pass it a new board that has the following result move,
 				// increase ply by 1
-				double eval = alphaBetaMax(board.result(m), alpha, b, ply + 1,
+				double eval = alphaBetaMax(_temp.result(m), alpha, b, ply + 1,
 						maxply);
 
 				if (eval < min)
