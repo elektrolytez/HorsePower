@@ -9,6 +9,7 @@ public class AlphaBeta {
 	private int _recurCount;
 	private int _totalRecursion = 0;
 	private EvalCheckers _eval;
+	private int _mostRecursion = 0;
 
 	public AlphaBeta() {
 	}
@@ -34,7 +35,7 @@ public class AlphaBeta {
 		for (Move a : board.getActions()) {
 
 			_recurCount = 0;
-			v = alphaBetaMin(board.result(a), alpha, Double.POSITIVE_INFINITY,
+			v = alphaBetaMin(board.result(a), alpha, Double.MAX_VALUE,
 					1, 9);
 			if (v > vBest) {
 				vBest = v;
@@ -70,11 +71,11 @@ public class AlphaBeta {
 		} else {
 			double a = alpha;
 			double max = Double.MIN_VALUE;
+			System.out.print(board.getActions().size());
 			for (Move m : board.getActions()) {
 				// pass it a new board that has the following result move,
 				// increase ply by 1
-				double eval = alphaBetaMin(board.result(m), a, beta, ply + 1,
-						maxply);
+				double eval = alphaBetaMin(board.result(m), a, beta, ply + 1, maxply);
 
 				if (eval > max)
 					max = eval;
@@ -108,13 +109,16 @@ public class AlphaBeta {
 		
 		//possible issue with board.getActions().size resulting in lowered performance
 		if (ply >= 12 || ply >= maxply || board.getActions().size() == 0) {
-			if (board.getActions().size() == 0)
+			if (board.getActions().size() == 0){
 				return Double.MAX_VALUE;
-
+				
+				}
+			
 			return _eval.evaluate(board, board.getPlayer());
 		} else {
 			double b = beta;
 			double min = Double.MAX_VALUE;
+			
 			for (Move m : board.getActions()) {
 				// pass it a new board that has the following result move,
 				// increase ply by 1
@@ -138,5 +142,10 @@ public class AlphaBeta {
 
 	public int getFinalRecursion() {
 		return _totalRecursion;
+	}
+	
+	public int getMaxRecursion(){
+		
+		return _mostRecursion;
 	}
 }

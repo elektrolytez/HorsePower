@@ -6,6 +6,7 @@ public class MiniMaxSearcher {
 
 	private int _recurCount;
 	private int _totalRecursion = 0;
+	private int _mostRecursion = 0;
 	
 	public MiniMaxSearcher() {	}
 	
@@ -26,6 +27,7 @@ public class MiniMaxSearcher {
 			tempCount = tempCount+_recurCount;
 		}
 		System.out.println("Total recursive calls : "+tempCount);
+		if(tempCount > _mostRecursion) _mostRecursion = tempCount;
 		return bestAction;
 	}
 	
@@ -57,7 +59,10 @@ public class MiniMaxSearcher {
 			return v;	
 		}
 	}
+	public int getMaxRecursion(){
 	
+		return _mostRecursion;
+	}
 	
 	public int getFinalRecursion() {
 		return _totalRecursion;

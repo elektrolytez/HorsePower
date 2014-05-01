@@ -1,6 +1,9 @@
 
 
 package horsepower_search;
+import java.util.ArrayList;
+import java.util.List;
+
 import horsepower_checkers.*;
 
 public class EvalCheckers {
@@ -12,8 +15,11 @@ public class EvalCheckers {
 	
 	{
 		
+		double _value = 0.0;
 		
-		return 0.0;
+		
+		
+		return _value;
 	}
 	
 }

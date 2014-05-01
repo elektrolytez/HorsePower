@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user;
-	private static String _pw;
+	private static String _user="15";
+	private static String _pw="544075";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
@@ -32,7 +32,7 @@ public class HPClient {
 	private static Boolean _myColor;
 	
 	// ~~~~~~~~~~~~~~~ Search Info ~~~~~~~~~~~~~~~
-	private static MiniMaxSearcher _sherlock;
+	private static AlphaBeta _sherlock;
 	
 	// ~~~~~~~~~~~~~~~ Other SHIT ~~~~~~~~~~~~~~~
 	private static Map<String,Integer> _IcarusMap = new HashMap<String,Integer>();
@@ -40,7 +40,7 @@ public class HPClient {
 	
 	
 	public HPClient() {
-		_sherlock = new MiniMaxSearcher();
+		_sherlock = new AlphaBeta();
 		_socket = this.openSocket(_icarusAddress, _icarusPort);
 		
 		//time creation of converter
@@ -97,7 +97,7 @@ public class HPClient {
 				
 				//define minimax depth and stuff
 				int depth = 3;
-				Move nextMove = _sherlock.minimaxDecision(_board, depth);
+				Move nextMove = _sherlock.alphaBeta(_board);
 				
 				if (nextMove == null) {
 					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SHIT IS NULL");
@@ -137,6 +137,7 @@ public class HPClient {
 		System.out.println("Total Time (ms) : " + time/1000000.0);
 		
 		System.out.println("Total Recursion : " + _sherlock.getFinalRecursion());
+		System.out.println("Max Recursion : " + _sherlock.getMaxRecursion());
 	}
 	
 	
