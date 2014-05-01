@@ -451,12 +451,18 @@ public class Board {
 			 * -ken
 			 */
 		int counter = 0;
+		double test = 0.0;
 			for(Move m: _moves)
 			{
 				int fromIndex = m.getFirstAct()[0];
 				int toIndex = m.getFirstAct()[1];
-				if(m.isMoveAJump())
-					_temp += 10.0;
+				if(m.isMoveAJump()){ 
+					//System.out.println(m.getJumpList().size()+"x");
+					
+					test = (double) m.getJumpList().size(); 
+					//System.out.println(1+(test/10)+"x");
+					_temp += 10*(1+(test/10.0));
+				}
 				else if(isKingUpAction(fromIndex, toIndex, m)) _temp += 7.5;
 				else {
 					
