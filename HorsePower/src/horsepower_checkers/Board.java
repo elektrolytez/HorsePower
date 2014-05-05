@@ -26,7 +26,7 @@ public class Board {
 	private List<Integer> _oppKingRowIndices = new ArrayList<Integer>();
 	private static String _oppSymbols;
 	private String _oppKing, _oppRegPce;
-	private int _oppRegCount, _oppKingCount;
+	public int _oppRegCount, _oppKingCount;
 	
 	
 	public Board(HPClient HPClient,String[] board, Boolean player) {
@@ -423,14 +423,23 @@ public class Board {
 		
 		//return Math.random();
 		double _temp = 0, _value = 0; 
-		
-		if (_oppKingCount+_oppRegCount == 0) { //_HPPlayer != player && 
+		//changed this to < 1, as oppReg never hits 0. Ever.
+		if (this._oppKingCount< 1 && this._oppRegCount < 2) { //_HPPlayer != player && 
 			//return Double.POSITIVE_INFINITY;
-			return 1000000.0;
+			//for(int i = 0; i<3; i++){
+			//System.out.println("Called.");}
+			return 5000.0;
 		}
-		if (_HPPlayer == player && _oppKingCount+_oppRegCount == 0) {
+		else{ 
+			//never called anymore
+			if(_oppKingCount <1 && _oppRegCount < 2)
+			
+			System.out.println("OP KING CNT:" + _oppKingCount + "|OP REG CNT:" + _oppRegCount) ; }
+		if (_HPPlayer == player && this._oppKingCount<2 && this._oppRegCount <3) {
 			//return Double.NEGATIVE_INFINITY;
-			return -1000000.0;
+			//for(int i = 0; i<100; i++){
+			//System.out.println("Called2.");}
+			return -5000.0;
 		}
 		
 		
@@ -452,6 +461,8 @@ public class Board {
 			 */
 		int counter = 0;
 		double test = 0.0;
+		
+		List<Move> _index = new ArrayList<Move>();
 			for(Move m: _moves)
 			{
 				int fromIndex = m.getFirstAct()[0];
@@ -467,8 +478,12 @@ public class Board {
 				else {
 					
 					
+					_index.add(m);
+					if(_index.contains(m)) 
+						_temp -= 2.0;
 					
-					 _temp = 5.0;}
+					else _temp += 3.5;
+					}
 				
 				counter++;
 				if(_temp > _value) _value = _temp;

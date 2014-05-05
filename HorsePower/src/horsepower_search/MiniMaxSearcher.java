@@ -20,14 +20,18 @@ public class MiniMaxSearcher {
 	
 	
 	public Move minimaxDecision(Board board, int depth){
-		double vBest = Double.NEGATIVE_INFINITY;
+		double vBest = //Double.NEGATIVE_INFINITY;
+				 (double) Integer.MIN_VALUE;
 		double v = 0.0;
 		Move bestAction = null;
 		
 		int tempCount = 0;
 		for (Move a : board.getActions()) {
+			
+			
 			_recurCount = 0;
-			v = maxValue(board.result(a), depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+			//v = maxValue(board.result(a), depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+			v = maxValue(board.result(a), depth, (double) Integer.MIN_VALUE, (double) Integer.MAX_VALUE);
 			if (v > vBest) {
 				vBest = v;
 				bestAction = a;
@@ -35,6 +39,11 @@ public class MiniMaxSearcher {
 			tempCount = tempCount+_recurCount;
 		}
 		System.out.println("Total recursive calls : "+tempCount);
+		System.out.println("V:"+v);
+		System.out.println("Vbest"+vBest);
+		System.out.println("OPK:" +board._oppKingCount + " OPR:" + board._oppRegCount);
+		//System.out.println(Double.MIN_VALUE);
+		//System.out.println(Integer.MIN_VALUE);
 		System.out.println("MINIMAX VALUE CHOSEN : "+vBest);
 		return bestAction;
 	}
@@ -49,7 +58,8 @@ public class MiniMaxSearcher {
 		} else {
 			_recurCount++;
 			_totalRecursion++;
-			double v = Double.NEGATIVE_INFINITY;
+			//double v = Double.NEGATIVE_INFINITY;
+			double v = (double) Integer.MIN_VALUE;
 			
 			List<Move> moveList = board.getActions();
 			long seed = System.nanoTime();
@@ -60,7 +70,9 @@ public class MiniMaxSearcher {
 				if (v >= BETA) {
 					return v;
 				}
-				ALPHA = Math.max(ALPHA, v);
+				//ALPHA = Math.max(ALPHA, v);
+				if(ALPHA < v) ALPHA = v;
+				else ALPHA = ALPHA;
 			}
 			return v;	
 		}
@@ -72,8 +84,8 @@ public class MiniMaxSearcher {
 		} else {
 			_recurCount++;
 			_totalRecursion++;
-			double v = Double.POSITIVE_INFINITY;
-			
+			//double v = Double.POSITIVE_INFINITY;
+			double v = (double) Integer.MAX_VALUE;
 			List<Move> moveList = board.getActions();
 			long seed = System.nanoTime();
 			Collections.shuffle(moveList, new Random(seed));
@@ -83,7 +95,10 @@ public class MiniMaxSearcher {
 				if (v <= ALPHA) {
 					return v;
 				}
-				BETA = Math.min(BETA, v);
+				//BETA = Math.min(BETA, v);
+				if(BETA > v) BETA = v;
+				
+				
 			}
 			return v;	
 		}

@@ -95,7 +95,7 @@ public class HPClient {
 //				Move nextMove = actions.get((int)(Math.random() * actions.size()));
 				
 				//define minimax depth
-				int depth = 7;
+				int depth = 11;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
@@ -115,6 +115,7 @@ public class HPClient {
 			}
 			
 			if (readMessage.contains(getColorAsString())) {
+				System.out.println("OPK: " + _board._oppKingCount + "|OPR:" + _board._oppRegCount);
 				System.out.println("YOU WIN!!!");
 			} else if (!readMessage.contains("Draw")) {
 				System.out.println("You lose");
