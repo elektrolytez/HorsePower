@@ -32,6 +32,7 @@ public class MiniMaxSearcher {
 			_recurCount = 0;
 			//v = maxValue(board.result(a), depth, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 			v = maxValue(board.result(a), depth, (double) Integer.MIN_VALUE, (double) Integer.MAX_VALUE);
+			if((v == -50000 || v == 50000) && depth > 9) {vBest = v; bestAction = a; break;}
 			if (v > vBest) {
 				vBest = v;
 				bestAction = a;
@@ -67,12 +68,13 @@ public class MiniMaxSearcher {
 			
 			for (Move s : moveList) { //board.getActions()
 				v = Math.max(v, minValue(board.result(s), depth - 1, ALPHA, BETA));
+				if(v == 50000 && depth > 9) return v;
 				if (v >= BETA) {
 					return v;
 				}
-				//ALPHA = Math.max(ALPHA, v);
-				if(ALPHA < v) ALPHA = v;
-				else ALPHA = ALPHA;
+				ALPHA = Math.max(ALPHA, v);
+				//if(ALPHA < v) ALPHA = v;
+				//else ALPHA = ALPHA;
 			}
 			return v;	
 		}
@@ -92,11 +94,12 @@ public class MiniMaxSearcher {
 			
 			for (Move s : moveList ) { //board.getActions()
 				v = Math.min(v, maxValue(board.result(s), depth - 1, ALPHA, BETA));
+				if(v == -50000 && depth > 9) return v;
 				if (v <= ALPHA) {
 					return v;
 				}
-				//BETA = Math.min(BETA, v);
-				if(BETA > v) BETA = v;
+				BETA = Math.min(BETA, v);
+				//if(BETA > v) BETA = v;
 				
 				
 			}

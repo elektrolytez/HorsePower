@@ -93,13 +93,13 @@ public class HPClient {
 				//random valid move - no minimax
 //				List<Move> actions = _board.getActions();
 //				Move nextMove = actions.get((int)(Math.random() * actions.size()));
-				int depth = 0;
+				int depth = 7;
 				//define minimax depth
 				//openings
 				if(_board.get_oppKingCount() <= 12 && _board.get_oppRegCount() >= 11)
 					depth = 7;
 				else{
-					depth = 13;
+					depth = 15;
 				}
 				if(_board.get_oppRegCount() < 7 && _board.get_oppKingCount() < 2)
 					depth = 9;
@@ -107,6 +107,8 @@ public class HPClient {
 					depth = 9;
 				if(_board.get_oppRegCount() < 3 && _board.get_oppKingCount() < 1)
 					depth = 7;
+				
+				System.out.println("Depth == " + depth);
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server

@@ -444,7 +444,7 @@ public class Board {
 			//return Double.POSITIVE_INFINITY;
 			//for(int i = 0; i<3; i++){
 			//System.out.println("Called.");}
-			return 5000.0;
+			return 50000.0;
 		}
 		else{ 
 			//never called anymore
