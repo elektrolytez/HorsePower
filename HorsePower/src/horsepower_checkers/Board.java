@@ -26,9 +26,25 @@ public class Board {
 	private List<Integer> _oppKingRowIndices = new ArrayList<Integer>();
 	private static String _oppSymbols;
 	private String _oppKing, _oppRegPce;
-	public int _oppRegCount, _oppKingCount;
+	private int _oppRegCount, _oppKingCount;
 	
 	
+	public int get_oppRegCount() {
+		return _oppRegCount;
+	}
+
+	public void set_oppRegCount(int _oppRegCount) {
+		this._oppRegCount = _oppRegCount;
+	}
+
+	public int get_oppKingCount() {
+		return _oppKingCount;
+	}
+
+	public void set_oppKingCount(int _oppKingCount) {
+		this._oppKingCount = _oppKingCount;
+	}
+
 	public Board(HPClient HPClient,String[] board, Boolean player) {
 
 		_HPClient = HPClient;
@@ -439,7 +455,7 @@ public class Board {
 			//return Double.NEGATIVE_INFINITY;
 			//for(int i = 0; i<100; i++){
 			//System.out.println("Called2.");}
-			return -5000.0;
+			return -50000.0;
 		}
 		
 		

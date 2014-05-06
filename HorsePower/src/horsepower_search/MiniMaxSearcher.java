@@ -41,7 +41,7 @@ public class MiniMaxSearcher {
 		System.out.println("Total recursive calls : "+tempCount);
 		System.out.println("V:"+v);
 		System.out.println("Vbest"+vBest);
-		System.out.println("OPK:" +board._oppKingCount + " OPR:" + board._oppRegCount);
+		System.out.println("OPK:" +board.get_oppKingCount() + " OPR:" + board.get_oppRegCount());
 		//System.out.println(Double.MIN_VALUE);
 		//System.out.println(Integer.MIN_VALUE);
 		System.out.println("MINIMAX VALUE CHOSEN : "+vBest);

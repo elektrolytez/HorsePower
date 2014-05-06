@@ -93,9 +93,20 @@ public class HPClient {
 				//random valid move - no minimax
 //				List<Move> actions = _board.getActions();
 //				Move nextMove = actions.get((int)(Math.random() * actions.size()));
-				
+				int depth = 0;
 				//define minimax depth
-				int depth = 11;
+				//openings
+				if(_board.get_oppKingCount() <= 12 && _board.get_oppRegCount() >= 11)
+					depth = 7;
+				else{
+					depth = 13;
+				}
+				if(_board.get_oppRegCount() < 7 && _board.get_oppKingCount() < 2)
+					depth = 9;
+				if(_board.get_oppRegCount() < 5 && _board.get_oppKingCount() < 1)
+					depth = 9;
+				if(_board.get_oppRegCount() < 3 && _board.get_oppKingCount() < 1)
+					depth = 7;
 				Move nextMove = _sherlock.minimaxDecision(_board, depth);
 				
 				HPClient.writeMessageAndEcho(nextMove.getMessage());// send the move to the server
@@ -112,10 +123,14 @@ public class HPClient {
 				_board = _board.result(serverMove);// write the move to the board
 				System.out.println(_board.toString()); // show the move
 				readMessage = HPClient.readAndEcho(); // move query
-			}
+				System.out.println("King :"+ _board.get_oppKingCount() + " | Reg :" + _board.get_oppRegCount());
+				
+				
+				
+			}//end while
 			
 			if (readMessage.contains(getColorAsString())) {
-				System.out.println("OPK: " + _board._oppKingCount + "|OPR:" + _board._oppRegCount);
+				System.out.println("OPK: " + _board.get_oppKingCount() + "|OPR:" + _board.get_oppRegCount());
 				System.out.println("YOU WIN!!!");
 			} else if (!readMessage.contains("Draw")) {
 				System.out.println("You lose");
