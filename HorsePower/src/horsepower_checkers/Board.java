@@ -322,7 +322,7 @@ public class Board {
 	 * Returns TRUE if current game state is terminal or if max depth of minimax has been reached
 	 */
 	 public Boolean isTerminal(int count) {
-		 if (_possibleMoves.isEmpty() || _oppKingCount+_oppRegCount == 0) {
+		 if (_possibleMoves.isEmpty() || (_oppKingCount<1 && _oppRegCount < 2)) {
 			 return true;
 		 } else {
 			 if (count <= 0) {
@@ -439,6 +439,8 @@ public class Board {
 		
 		//return Math.random();
 		double _temp = 0, _value = 0; 
+		
+		System.out.println("OPK:" + _oppKingCount + "|OPR:" + _oppRegCount);
 		//changed this to < 1, as oppReg never hits 0. Ever.
 		if (this._oppKingCount< 1 && this._oppRegCount < 2) { //_HPPlayer != player && 
 			//return Double.POSITIVE_INFINITY;

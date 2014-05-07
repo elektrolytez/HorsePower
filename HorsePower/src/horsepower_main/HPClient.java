@@ -4,8 +4,11 @@ import horsepower_checkers.*;
 import horsepower_search.*;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,8 +21,9 @@ import java.util.Scanner;
 public class HPClient {
 	
 	// ~~~~~~~~~~~~~~~ Icarus2 Server Connection Info ~~~~~~~~~~~~~~~
-	private static String _user="15";
-	private static String _pw="544075";
+	private static String _user="16";
+	//private static String _pw="544075";
+	private static String _pw="366379";
 	private static String _opponent = "0"; // 0 for server bot
 	private final String _icarusAddress = "icarus2.engr.uconn.edu";
 	private int _icarusPort = 3499;
@@ -54,6 +58,16 @@ public class HPClient {
 		
 		HPClient HPClient = new HPClient();
 		String readMessage;
+		/* print out*/
+		PrintStream out;
+		try {
+			out = new PrintStream(new FileOutputStream("C:/Users/Ken/Desktop/output.txt"));
+			System.setOut(out);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		
 		try {
 			Scanner reader = new Scanner(System.in);
@@ -99,7 +113,7 @@ public class HPClient {
 				if(_board.get_oppKingCount() <= 12 && _board.get_oppRegCount() >= 11)
 					depth = 7;
 				else{
-					depth = 15;
+					depth = 11;
 				}
 				if(_board.get_oppRegCount() < 7 && _board.get_oppKingCount() < 2)
 					depth = 9;
